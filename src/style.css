@@ -1,3 +1,48 @@
-.alert-error {
-    color: red;
+
+#container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+.left-div,
+.right-div {
+    background-color: beige;
+    flex: 1;
+    border: solid grey;
+}
+.left-div {
+    padding: 16px;
+    margin-right: 16px;
+}
+
+@media (max-width: 767px) {
+    .left-div {
+        margin: 0;
+    }
+}
+
+.right-div {
+    padding: 30px;
+    margin-right: 30px;
+}
+.header {
+    color: white;
+    background-color: blue;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+} 
+
+p {
+    margin-left: 16px;
+    font-size: 14px;
+    width: 250px;
+    height: 32px;
+    padding: 2px;
+}
+img{
+    width: 100px;
+    height: 100px;
 }
