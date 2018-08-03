@@ -48,3 +48,9 @@ img{
     height: 100px;
 
 }
+.Translatedlabel{
+font-size: 20;
+font-weight: bold;
+font-style: italic;
+color: green; 
+}

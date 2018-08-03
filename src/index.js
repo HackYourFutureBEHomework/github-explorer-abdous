@@ -1,12 +1,12 @@
 'use strict';
-//let main = main();
+
 
 
   function fetchJSON(url) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url);
-      //xhr.responseType ='json'
+      
       xhr.onload = () => {
         if ( xhr.status === 200) {
           resolve(xhr.responseText);
@@ -16,10 +16,11 @@
           reject(xhr.responseText);
         }
       }
-      xhr.onerror = () => reject("404 Network failed");
+      xhr.onerror = () => reject('404 Network failed');
       xhr.send();
     });
   }
+
   function createAndAppend(name, parent, options = {}) {
     const elem = document.createElement(name);
     parent.appendChild(elem);
@@ -35,9 +36,8 @@
   }
 
   function main(url) {
-    const root = document.getElementById('root');
     
-    fetchJSON(url).then(JSON.parse).then(data => {
+      fetchJSON(url).then(JSON.parse).then(data => {
       
           let header = document.createElement('header');
           header.setAttribute("class", "header");
@@ -77,35 +77,48 @@
           Contributors(right, repo);
 
 
-        }
-    )
-    };
+        });
+      
+      }
+       
+      let  dictionary = {
+          forks_count: 'Forks :',
+          name:'Name :',
+          description:'Description :',
+          updated_at:'Update :',
+          url: 'URL:'
+         };
+
+      function translate(labelName){
+            let DictLabel = dictionary[labelName];
+            return DictLabel;
+                  }
 
     function Repo(parent, repo) {
       
-      let labelNames = ['name', 'description', 'forks', 'url'];
+      let labelNames = ['name'  ,'description'  ,'forks_count'  ,'updated_at'  ,'url'  ];
       labelNames.forEach(labelName => {
         let p = createAndAppend('p', parent);
-        createAndAppend('label', p, { html: labelName });
+        let trans= translate(labelName);
+          
+
+        createAndAppend('label', p, { html: trans, class: 'Translatedlabel'});
         createAndAppend('span', p, { html: repo[labelName] });
       });
-    }
-
+    };
+        
     function Contributors(parent, repo) {
       let url = repo.contributors_url;
-      fetchJSON(url), (err, contributors) => {
-        if (err) {
-          createAndAppend('div', parent, { html: err.message, class: 'alert-error' });
-        } else {
+        fetchJSON(url).then(JSON.parse).then(contributors=> {
 
-          contributors.forEach(contributor => {
+           contributors.forEach(contributor => {
 
-            let contributorDiv = createAndAppend('div', parent);
-            createAndAppend('img', contributorDiv, { src: contributor.avatar_url })
-          });
+             let contributorDiv = createAndAppend('div', parent);
+             createAndAppend('img', contributorDiv, { src: contributor.avatar_url })
+           });
 
-        }
-      } .catch(err => document.getElementById('root').innerHTML = err);
+         
+       }).catch(err => document.getElementById('root').innerHTML = err);
       
 
 
