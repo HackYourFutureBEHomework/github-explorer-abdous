@@ -1,25 +1,25 @@
-'use strict';
+'use strict';{
 
 
 
-  function fetchJSON(url) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url);
+  // function fetchJSON(url) {
+  //   return new Promise((resolve, reject) => {
+  //     const xhr = new XMLHttpRequest();
+  //     xhr.open('GET', url);
       
-      xhr.onload = () => {
-        if ( xhr.status === 200) {
-          resolve(xhr.responseText);
-        } else
+  //     xhr.onload = () => {
+  //       if ( xhr.status === 200) {
+  //         resolve(xhr.responseText);
+  //       } else
         
-         {
-          reject(xhr.responseText);
-        }
-      }
-      xhr.onerror = () => reject('404 Network failed');
-      xhr.send();
-    });
-  }
+  //        {
+  //         reject(xhr.responseText);
+  //       }
+  //     }
+  //     xhr.onerror = () => reject('404 Network failed');
+  //     xhr.send();
+  //   });
+  // }
 
   function createAndAppend(name, parent, options = {}) {
     const elem = document.createElement(name);
@@ -35,10 +35,12 @@
     return elem;
   }
 
-  function main(url) {
-    
-      fetchJSON(url).then(JSON.parse).then(data => {
-      
+  async function main(url) {
+      let root = document.getElementById('root');
+      //fetchJSON(url).then(JSON.parse).then(data => 
+        try {
+            let resp = await fetch(url);
+            let data = await resp.json();
           let header = document.createElement('header');
           header.setAttribute("class", "header");
           root.appendChild(header);
@@ -49,6 +51,9 @@
           let select = document.createElement('select');
           select.setAttribute('class', "repo-selector");
           header.appendChild(select);
+          //Sort the list
+          data.sort((a, b) => (a.name).localeCompare(b.name));
+
           data.forEach(repo => {
             
             createAndAppend('option', select, { html: repo.name });
@@ -76,10 +81,16 @@
           Repo(left, repo);
           Contributors(right, repo);
 
-
-        });
+       document.getElementById('root')
+        } catch (err){
+          let  root = document.getElementById('root');
+          createAndAppend('div', root,{
+            html: err.message, 
+            class:"alert-error"
+          });
+        }
       
-      }
+      
        
       let  dictionary = {
           forks_count: 'Forks :',
@@ -107,10 +118,14 @@
       });
     };
         
-    function Contributors(parent, repo) {
+    async function Contributors(parent, repo) {
       let url = repo.contributors_url;
-        fetchJSON(url).then(JSON.parse).then(contributors=> {
-
+        //fetchJSON(url).then(JSON.parse).then(contributors=> 
+          try {
+           let resp = await fetch(url);
+           let contributors = await resp.json();
+          //  console.log(contData);
+          //  $controbutorsList.innerHTML = "";
            contributors.forEach(contributor => {
 
              let contributorDiv = createAndAppend('div', parent);
@@ -118,13 +133,22 @@
            });
 
          
-       }).catch(err => document.getElementById('root').innerHTML = err);
-      
+       }catch(err){
+         let root = document.getElementById('root');
+         createAndAppend('div', root,{
+           html: err.message,
+           class: "alert-error"
 
+         });
+         
+       }
+       // => document.getElementById('root').innerHTML = err;
+      
+      }
 
     }
 
     const HYF_REPOS_URL = 'https://api.github.com/orgs/HackYourFuture/repos?per_page=100';
     
     window.onload = () => main(HYF_REPOS_URL);
-  
+  }
